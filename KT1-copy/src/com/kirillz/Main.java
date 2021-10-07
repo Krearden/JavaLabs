@@ -68,7 +68,7 @@ public class Main {
         loadInfo();
         for (int i = 0; i < users.size(); i++)
         {
-            System.out.println(users.get(i).getName() + users.get(i).getId() + users.get(i).getLogin());
+            System.out.println(users.get(i).getName() + users.get(i).getId() + users.get(i).getLogin() + users.get(i).getGender());
         }
     }
 }

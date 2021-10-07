@@ -22,7 +22,11 @@ public class CUser {
             this.login = login;
     }
     public String getName() {return name;}
-    public void setName(String name) {this.name = name;}
+    public void setName(String name)
+    {
+        if (name.length() <= 50)
+            this.name = name;
+    }
     public String getGender() {return gender;}
     public void setGender(String gender)
     {
@@ -47,6 +51,7 @@ public class CUser {
     {
         setId(id);
         setLogin(login);
+        setName(name);
         setDateOfBirth(dateOfBirth);
         setGender(gender);
     }
