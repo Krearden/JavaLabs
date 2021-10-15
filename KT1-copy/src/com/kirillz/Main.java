@@ -1,6 +1,9 @@
 package com.kirillz;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,7 +14,9 @@ import java.util.UUID;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xwpf.usermodel.*;
 
 public class Main {
     private static final ArrayList<CUser> users = new ArrayList<>();
@@ -152,7 +157,7 @@ public class Main {
         DayOfWeek day = purchase_date.getDayOfWeek();
         return day == DayOfWeek.FRIDAY;
     }
-    //функция для нахождения имени пользователя по id -- NEED FIX
+    //функция для нахождения имени пользователя по id
     private static String getNameById(UUID user_id)
     {
         String answer_name = null;
@@ -163,7 +168,7 @@ public class Main {
        }
        return answer_name;
     }
-    //функция нахождения наименования товара по id -- NEED FIX
+    //функция нахождения наименования товара по id
     private static String getProductNameById(UUID product_id)
     {
         String answer_product_name = null;
@@ -176,28 +181,74 @@ public class Main {
         }
         return answer_product_name;
     }
-
-    public static void main(String[] args) {
-        // write your code here
-        loadInfo();
-        //проходимся по всем покупкам, находим те, которые были совершены в пт.
+    //функция записи результатов работы программы в файл -- NEED FIX
+    private static void createWord()
+    {
         boolean friday;
         UUID user_id;
         UUID product_id;
         String username;
         String product_name;
-        for (int i = 0; i < orders.size(); i++)
+        try (XWPFDocument document = new XWPFDocument())
         {
-            LocalDateTime purchase_date = orders.get(i).getPurchase_date_time();
-            friday = fridayCheck(purchase_date);
-            if (friday)
+            //хедер
+            XWPFHeader head = document.createHeader(HeaderFooterType.DEFAULT);
+            head.createParagraph()
+                    .createRun()
+                    .setText("КТ-1 Java; Выполнил Кирилл Запорожченко (2 курс, Физфак, ПМИ, ФЗ-12)");
+            //заголовок документа
+            XWPFParagraph paragraph = document.createParagraph();
+            paragraph.setAlignment(ParagraphAlignment.CENTER);
+            XWPFRun run = paragraph.createRun();
+            run.setBold(true);
+            run.setFontFamily("Courier");
+            run.setFontSize(15);
+            run.setText("\nНиже представлены пользователи, которые совершили покупки в пятницу\n");
+            //создаем табцицу
+            XWPFTable table = document.createTable();
+            //первая строка таблицы с заголовками столбцов
+            XWPFTableRow tableRowOne = table.getRow(0);
+            tableRowOne.getCell(0).setText("Имя");
+            tableRowOne.addNewTableCell().setText("Пользователь ИД");
+            tableRowOne.addNewTableCell().setText("Наименование");
+            tableRowOne.addNewTableCell().setText("Продукт ИД");
+            //цикл - проходимся по заказам и записываем в таблицу те, которые были совершены в ПТ
+            for (int i = 0; i < orders.size(); i++)
             {
-                user_id = orders.get(i).getUser_id();
-                product_id = orders.get(i).getProduct_id();
-                username = getNameById(user_id);
-                product_name = getProductNameById(product_id);
-                System.out.println("FRIDAY" + " " + user_id + " " + username + " " + product_name);
+                LocalDateTime purchase_date = orders.get(i).getPurchase_date_time();
+                friday = fridayCheck(purchase_date);
+                if (friday)
+                {
+                    user_id = orders.get(i).getUser_id();
+                    product_id = orders.get(i).getProduct_id();
+                    username = getNameById(user_id);
+                    product_name = getProductNameById(product_id);
+                    System.out.println("FRIDAY" + " " + user_id + " " + username + " " + product_name);
+                    //создание и запись информации в новую строку таблицы
+                    XWPFTableRow tableRow = table.createRow();
+                    tableRow.getCell(0).setText(username);
+                    tableRow.addNewTableCell().setText(user_id.toString());
+                    tableRow.addNewTableCell().setText(product_name);
+                    tableRow.addNewTableCell().setText(orders.get(i).getProduct_id().toString());
+                }
             }
+
+            try (FileOutputStream out = new FileOutputStream("friday_users_report.docx")) {
+                document.write(out);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
+
+
+    public static void main(String[] args) {
+        // write your code here
+        loadInfo();
+        createWord();
     }
 }
