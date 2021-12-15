@@ -3,17 +3,17 @@ package com.kirillz.KT2.model;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import javax.swing.*;
 import java.time.LocalDate;
-import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
 public class CUser {
     @Id
-    @GenericGenerator(name = "UUIDGenerator", strategy = "uuid2")
-    @GeneratedValue(generator = "UUIDGenerator")
+//    @GenericGenerator(name = "UUIDGenerator", strategy = "uuid2") don't generate new UUID, use the existing one
+//    @GeneratedValue(generator = "UUIDGenerator")
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
@@ -28,6 +28,9 @@ public class CUser {
 
     @Column(name = "date_of_birth", columnDefinition = "DATE")
     private LocalDate dateOfBirth;
+
+    @OneToMany(mappedBy="owner", fetch = FetchType.EAGER)
+    private List<COrder> orders;
 
     //геттеры, сеттеры и функции
     public UUID getId() {return id;}
@@ -47,9 +50,9 @@ public class CUser {
     public String getGender() {return gender;}
     public void setGender(String gender)
     {
-        if (gender == "Male")
+        if (Objects.equals(gender, "Male"))
             this.gender = gender;
-        else if (gender == "Female")
+        else if (Objects.equals(gender, "Female"))
             this.gender = gender;
     }
     public LocalDate getDateOfBirth() {return dateOfBirth;}

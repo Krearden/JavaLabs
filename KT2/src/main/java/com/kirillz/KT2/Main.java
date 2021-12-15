@@ -9,8 +9,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
+import com.kirillz.KT2.dao.CDAOOrders;
+import com.kirillz.KT2.dao.CDAOProducts;
+import com.kirillz.KT2.dao.CDAOUsers;
 import com.kirillz.KT2.model.COrder;
 import com.kirillz.KT2.model.CProduct;
 import com.kirillz.KT2.model.CUser;
@@ -64,6 +69,10 @@ public class Main {
                 //gender
                 cell = row.getCell(3);
                 gender = cell.getStringCellValue();
+                if (Objects.equals(gender, "м"))
+                    gender = "Male";
+                else if (Objects.equals(gender, "ж"))
+                    gender = "Female";
                 //birth date
                 cell = row.getCell(4);
                 dateOfBirth = cell.getDateCellValue().toInstant()
@@ -127,7 +136,8 @@ public class Main {
             UUID user_id;
             UUID product_id;
             String temp;
-            LocalDateTime purchase_date;
+            LocalDateTime purchase_date_time;
+            LocalDate purchase_date;
             for (int i = 1; i <= rows; i++)
             {
                 row = sheet.getRow(i);
@@ -143,7 +153,8 @@ public class Main {
                 product_id = UUID.fromString(temp);
                 //purchase date and time
                 cell = row.getCell(2);
-                purchase_date = cell.getLocalDateTimeCellValue();
+                purchase_date_time = cell.getLocalDateTimeCellValue();
+                purchase_date = purchase_date_time.toLocalDate();
                 orders.add(new COrder(user_id, product_id, purchase_date));
             }
         } catch (Exception e) {e.printStackTrace();}
@@ -158,7 +169,7 @@ public class Main {
     }
 
     //проверка, является ли дата пятницой
-    private static boolean fridayCheck(LocalDateTime purchase_date)
+    private static boolean fridayCheck(LocalDate purchase_date)
     {
         DayOfWeek day = purchase_date.getDayOfWeek();
         return day == DayOfWeek.FRIDAY;
@@ -221,7 +232,7 @@ public class Main {
             //цикл - проходимся по заказам и записываем в таблицу те, которые были совершены в ПТ
             for (int i = 0; i < orders.size(); i++)
             {
-                LocalDateTime purchase_date = orders.get(i).getPurchase_date_time();
+                LocalDate purchase_date = orders.get(i).getPurchase_date();
                 friday = fridayCheck(purchase_date);
                 if (friday)
                 {
@@ -254,21 +265,17 @@ public class Main {
 
     public static void main(String[] args) {
         // write your code here
-//        loadInfo();
+        loadInfo();
 //        createWord();
-        System.out.println("hello world");
-        try (Session session = CHibernateConfig.getSessionFactory().openSession()) {
-            session.beginTransaction();
-            CUser cUser_one = new CUser();
-            cUser_one.setGender("Male");
-            cUser_one.setName("Danila");
-            cUser_one.setLogin("Danila_login");
-            cUser_one.setDateOfBirth(LocalDate.now());
-            session.save(cUser_one);
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //save users to DB
+        CDAOUsers cdaoUsers = new CDAOUsers(CHibernateConfig.getSessionFactory());
+        CDAOProducts cdaoProducts = new CDAOProducts(CHibernateConfig.getSessionFactory());
+        CDAOOrders cdaoOrders = new CDAOOrders(CHibernateConfig.getSessionFactory());
+
+        cdaoUsers.saveList(users);
+        cdaoProducts.saveList(products);
+        cdaoOrders.saveList(orders);
+        //load users from DB
 
     }
 }

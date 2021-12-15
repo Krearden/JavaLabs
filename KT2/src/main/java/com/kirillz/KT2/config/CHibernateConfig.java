@@ -5,6 +5,8 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import com.kirillz.KT2.model.CUser;
+import com.kirillz.KT2.model.CProduct;
+import com.kirillz.KT2.model.COrder;
 
 import java.util.Properties;
 
@@ -35,8 +37,8 @@ public class CHibernateConfig {
                 configuration.setProperties(settings);
 
                 configuration.addAnnotatedClass(CUser.class);
-//                configuration.addAnnotatedClass(COrder.class);
-//                configuration.addAnnotatedClass(CGood.class);
+                configuration.addAnnotatedClass(COrder.class);
+                configuration.addAnnotatedClass(CProduct.class);
 
                 StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
                 sessionFactory = configuration.buildSessionFactory(builder.build());
