@@ -11,8 +11,6 @@ import java.util.UUID;
 @Table(name = "products")
 public class CProduct {
     @Id
-//    @GenericGenerator(name = "UUIDGenerator", strategy = "uuid2")
-//    @GeneratedValue(generator = "UUIDGenerator")
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
@@ -41,6 +39,13 @@ public class CProduct {
     }
     public String getCategory() {return category;}
     public void setCategory(String category) {this.category = category;}
+    public List<COrder> getOrders() {
+        return orders;
+    }
+    public void setOrders(List<COrder> orders)
+    {
+        this.orders = orders;
+    }
 
     //путой конструктор
     public CProduct()
@@ -52,11 +57,13 @@ public class CProduct {
     }
 
     //коструктор класса
-    public CProduct(UUID id, String product_name, int price, String category)
+    public CProduct(UUID id, String product_name, int price, String category, List <COrder> orders)
     {
         setId(id);
         setProduct_name(product_name);
         setPrice(price);
         setCategory(category);
+        setOrders(orders);
     }
+
 }

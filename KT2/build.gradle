@@ -42,8 +42,6 @@ dependencies {
     implementation 'javax.persistence:javax.persistence-api:2.2'
     implementation 'org.postgresql:postgresql:42.3.1'
 
-    //implementation 'no.tornado:tornadofx:1.7.20'
-    implementation("no.tornado:tornadofx:2.0.0-SNAPSHOT")
 }
 
 test {

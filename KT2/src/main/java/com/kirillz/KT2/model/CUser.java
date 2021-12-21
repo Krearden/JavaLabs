@@ -12,8 +12,6 @@ import java.util.List;
 @Table(name = "users")
 public class CUser {
     @Id
-//    @GenericGenerator(name = "UUIDGenerator", strategy = "uuid2") don't generate new UUID, use the existing one
-//    @GeneratedValue(generator = "UUIDGenerator")
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
@@ -65,6 +63,14 @@ public class CUser {
         LocalDate now = LocalDate.now();
         return now.getYear() - dateOfBirth.getYear();
     }
+    //getter and setter for orders
+    public List<COrder> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<COrder> orders) {
+        this.orders = orders;
+    }
 
     //путой конструктор
     public CUser()
@@ -76,12 +82,15 @@ public class CUser {
     }
 
     //конструктор класса
-    public CUser(UUID id, String login, String name, String gender, LocalDate dateOfBirth)
+    public CUser(UUID id, String login, String name, String gender, LocalDate dateOfBirth, List <COrder> orders)
     {
         setId(id);
         setLogin(login);
         setName(name);
         setDateOfBirth(dateOfBirth);
         setGender(gender);
+        this.setOrders(orders);
     }
+
+
 }

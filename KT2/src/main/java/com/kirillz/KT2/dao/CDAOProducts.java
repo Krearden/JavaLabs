@@ -60,6 +60,7 @@ public class CDAOProducts implements IDAO<CProduct>{
         }
         return products;
     }
+
     @Override
     public void save(CProduct user)
     {
@@ -74,22 +75,7 @@ public class CDAOProducts implements IDAO<CProduct>{
             e.printStackTrace();
         }
     }
-    public void saveList(List<CProduct> users)
-    {
-        try(Session session = sessionFactory.openSession())
-        {
-            for (int i=0; i<users.size(); i++) {
-                session.beginTransaction();
-                for (int j = 0; j<1000 && i<users.size(); j++, i++)
-                    session.save(users.get(i));
-                session.getTransaction().commit();
-            }
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
+
     @Override
     public void update(CProduct user)
     {

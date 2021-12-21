@@ -30,21 +30,7 @@ public class CDAOUsers implements IDAO<CUser> {
         }
         return user;
     }
-    public CUser get(String  login)
-    {
-        CUser user = null;
-        try(Session session = sessionFactory.openSession())
-        {
-            Query<CUser> q = session.createQuery("Select u from CUser u where u.login=:login");
-            q.setParameter("login", login);
-            user = q.getSingleResult();
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-        return user;
-    }
+
     @Override
     public List<CUser> getAll(){
         List<CUser> users;
@@ -73,22 +59,7 @@ public class CDAOUsers implements IDAO<CUser> {
             e.printStackTrace();
         }
     }
-    public void saveList(List<CUser> users)
-    {
-        try(Session session = sessionFactory.openSession())
-        {
-            for (int i=0; i<users.size(); i++) {
-                session.beginTransaction();
-                for (int j = 0; j<1000 && i<users.size(); j++, i++)
-                    session.save(users.get(i));
-                session.getTransaction().commit();
-            }
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
+
     @Override
     public void update(CUser user)
     {

@@ -18,40 +18,40 @@ public class CDAOOrders implements IDAO<COrder>{
     @Override
     public COrder get(UUID id)
     {
-        COrder user = null;
+        COrder order = null;
         try(Session session = sessionFactory.openSession())
         {
-            user = session.get(COrder.class, id);
+            order = session.get(COrder.class, id);
         }
         catch(Exception e)
         {
             e.printStackTrace();
         }
-        return user;
+        return order;
     }
+
     @Override
     public List<COrder> getAll(){
-        List<COrder> users;
+        List<COrder> orders;
         try(Session session = sessionFactory.openSession())
         {
-            users = session.createQuery("from COrder").list();
+            orders = session.createQuery("from COrder").list();
         }
         catch(Exception e)
         {
-            users = new ArrayList<>();
+            orders = new ArrayList<>();
             e.printStackTrace();
         }
-        return users;
+        return orders;
     }
+
     @Override
-    public void save(COrder user)
+    public void save(COrder order)
     {
         try(Session session = sessionFactory.openSession())
         {
             session.beginTransaction();
-            session.save(user);
-
-
+            session.save(order);
             session.getTransaction().commit();
         }
         catch(Exception e)
@@ -59,63 +59,34 @@ public class CDAOOrders implements IDAO<COrder>{
             e.printStackTrace();
         }
     }
-    public void saveList(List<COrder> users)
-    {
-        try(Session session = sessionFactory.openSession())
-        {
-            for (int i=0; i<users.size(); i++) {
-                session.beginTransaction();
-                for (int j = 0; j<1000 && i<users.size(); j++, i++)
-                    session.save(users.get(i));
-                session.getTransaction().commit();
-            }
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-    @Override
-    public void update(COrder user)
-    {
-        try(Session session = sessionFactory.openSession())
-        {
-            session.beginTransaction();
-            session.update(user);
-            session.getTransaction().commit();
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-    @Override
-    public void delete(COrder user)
-    {
-        try(Session session = sessionFactory.openSession())
-        {
-            session.beginTransaction();
-            session.delete(user);
-            session.getTransaction().commit();
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-    @SuppressWarnings("unchecked")
-    public List<COrder> getAllWithProducts(){
-        List<COrder> users;
-        try(Session session = sessionFactory.openSession())
-        {
-            users = session.createQuery("SELECT o from COrder o JOIN fetch o.products").list();
-        }
-        catch(Exception e)
-        {
-            users = new ArrayList<>();
-            e.printStackTrace();
-        }
-        return users;
 
+    @Override
+    public void update(COrder order)
+    {
+        try(Session session = sessionFactory.openSession())
+        {
+            session.beginTransaction();
+            session.update(order);
+            session.getTransaction().commit();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void delete(COrder order)
+    {
+        try(Session session = sessionFactory.openSession())
+        {
+            session.beginTransaction();
+            session.delete(order);
+            session.getTransaction().commit();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }
