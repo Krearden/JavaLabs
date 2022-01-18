@@ -163,12 +163,120 @@ public class Main {
         } catch (Exception e) {e.printStackTrace();}
     }
 
-    //загрузка информации из excel
+    //beta заполнить продукты у заказов
+    private static void loadProductsInOrders()
+    {
+        for (COrder order : orders)
+        {
+            UUID owners_uuid = order.getOwner().getId();
+            List<CProduct> local_products = new ArrayList<>();
+            File file = new File("./files/Магазин.xlsx");
+            try (XSSFWorkbook wb = new XSSFWorkbook(file))
+            {
+                Sheet sheet = wb.getSheet("Покупки");
+                int rows = sheet.getLastRowNum();
+                Row row;
+                Cell cell;
+                //переменные для данных заказа
+                UUID user_id;
+                UUID product_id;
+                String temp;
+                for (int i = 1; i <= rows; i++)
+                {
+                    row = sheet.getRow(i);
+                    if (row == null)
+                        continue;
+                    //user_id
+                    cell = row.getCell(0);
+                    temp = cell.getStringCellValue();
+                    user_id = UUID.fromString(temp);
+                    //product_id
+                    cell = row.getCell(1);
+                    temp = cell.getStringCellValue();
+                    product_id = UUID.fromString(temp);
+                    if (user_id.equals(owners_uuid))
+                    {
+                        local_products.add(getCProductById(product_id));
+                    }
+                }
+            } catch (Exception e) {e.printStackTrace();}
+            order.setProducts(local_products);
+
+        }
+    }
+
+    //beta заполнить заказы у продуктов
+    private static void loadOrdersInProducts()
+    {
+        for (CProduct product : products)
+        {
+            UUID products_uuid = product.getId();
+            List<COrder> local_orders = new ArrayList<>();
+            File file = new File("./files/Магазин.xlsx");
+            try (XSSFWorkbook wb = new XSSFWorkbook(file))
+            {
+                Sheet sheet = wb.getSheet("Покупки");
+                int rows = sheet.getLastRowNum();
+                Row row;
+                Cell cell;
+                //переменные для данных заказа
+                UUID user_id;
+                UUID product_id;
+                String temp;
+                for (int i = 1; i <= rows; i++)
+                {
+                    row = sheet.getRow(i);
+                    if (row == null)
+                        continue;
+                    //user_id
+                    cell = row.getCell(0);
+                    temp = cell.getStringCellValue();
+                    user_id = UUID.fromString(temp);
+                    //product_id
+                    cell = row.getCell(1);
+                    temp = cell.getStringCellValue();
+                    product_id = UUID.fromString(temp);
+                    if (products_uuid.equals(product_id))
+                    {
+                        local_orders.add(getCOrderByUserId(user_id));
+                    }
+                }
+            } catch (Exception e) {e.printStackTrace();}
+            product.setOrders(local_orders);
+
+        }
+    }
+
+    //beta заполнить заказы у пользователей
+    private static void loadOrdersInUsers()
+    {
+        for (CUser user : users)
+        {
+            UUID user_uuid = user.getId();
+            List<COrder> local_orders = new ArrayList<>();
+            for (COrder order : orders)
+            {
+                UUID owners_uuid = order.getOwner().getId();
+                if (user_uuid.equals(owners_uuid))
+                {
+                    local_orders.add(order);
+                }
+            }
+            user.setOrders(local_orders);
+
+        }
+    }
+    //загрузка информации из excel и заполнение аргументов классов, отвечающих за связь между ними
     private static void loadInfo()
     {
+        //заполняем списки, определенные в начале файла. аргументы представленных классов, ссылающиеся друг на друга, пока пусты.
         loadProductsExcel();
         loadUsersExcel();
         loadOrdersExcel();
+        //заполняем аргументы классов в списках, которые ссылаются друг на друга (чтобы hibernate сам расставил все ссылки в БД)
+        loadProductsInOrders();
+        loadOrdersInProducts();
+        loadOrdersInUsers();
     }
 
     //проверка, является ли дата пятницой
@@ -307,116 +415,33 @@ public class Main {
     public static void main(String[] args) {
         // write you r code here
         loadInfo();
-
-        //beta заполнить продукты у заказов
-        for (COrder order : orders)
-        {
-            UUID owners_uuid = order.getOwner().getId();
-            List<CProduct> local_products = new ArrayList<>();
-            File file = new File("./files/Магазин.xlsx");
-            try (XSSFWorkbook wb = new XSSFWorkbook(file))
-            {
-                Sheet sheet = wb.getSheet("Покупки");
-                int rows = sheet.getLastRowNum();
-                Row row;
-                Cell cell;
-                //переменные для данных заказа
-                UUID user_id;
-                UUID product_id;
-                String temp;
-                for (int i = 1; i <= rows; i++)
-                {
-                    row = sheet.getRow(i);
-                    if (row == null)
-                        continue;
-                    //user_id
-                    cell = row.getCell(0);
-                    temp = cell.getStringCellValue();
-                    user_id = UUID.fromString(temp);
-                    //product_id
-                    cell = row.getCell(1);
-                    temp = cell.getStringCellValue();
-                    product_id = UUID.fromString(temp);
-                    if (user_id.equals(owners_uuid))
-                    {
-                        local_products.add(getCProductById(product_id));
-                    }
-                }
-            } catch (Exception e) {e.printStackTrace();}
-            order.setProducts(local_products);
-
-        }
-
-        //beta заполнить заказы у продуктов
-        for (CProduct product : products)
-        {
-            UUID products_uuid = product.getId();
-            List<COrder> local_orders = new ArrayList<>();
-            File file = new File("./files/Магазин.xlsx");
-            try (XSSFWorkbook wb = new XSSFWorkbook(file))
-            {
-                Sheet sheet = wb.getSheet("Покупки");
-                int rows = sheet.getLastRowNum();
-                Row row;
-                Cell cell;
-                //переменные для данных заказа
-                UUID user_id;
-                UUID product_id;
-                String temp;
-                for (int i = 1; i <= rows; i++)
-                {
-                    row = sheet.getRow(i);
-                    if (row == null)
-                        continue;
-                    //user_id
-                    cell = row.getCell(0);
-                    temp = cell.getStringCellValue();
-                    user_id = UUID.fromString(temp);
-                    //product_id
-                    cell = row.getCell(1);
-                    temp = cell.getStringCellValue();
-                    product_id = UUID.fromString(temp);
-                    if (products_uuid.equals(product_id))
-                    {
-                        local_orders.add(getCOrderByUserId(user_id));
-                    }
-                }
-            } catch (Exception e) {e.printStackTrace();}
-            product.setOrders(local_orders);
-
-        }
-        //beta заполнить заказы у пользователей
-        for (CUser user : users)
-        {
-            UUID user_uuid = user.getId();
-            List<COrder> local_orders = new ArrayList<>();
-            for (COrder order : orders)
-            {
-                UUID owners_uuid = order.getOwner().getId();
-                if (user_uuid.equals(owners_uuid))
-                {
-                    local_orders.add(order);
-                }
-            }
-            user.setOrders(local_orders);
-
-        }
-        int x = 0;
-
+        //cdao
         CDAOUsers cdaoUsers = new CDAOUsers(CHibernateConfig.getSessionFactory());
         CDAOProducts cdaoProducts = new CDAOProducts(CHibernateConfig.getSessionFactory());
         CDAOOrders cdaoOrders = new CDAOOrders(CHibernateConfig.getSessionFactory());
-        for (CUser user : users)
+        //чтобы не записывать информацию в бд при каждом запуске
+        boolean load2database = false;
+        if (load2database)
         {
-            cdaoUsers.save(user);
+            cdaoUsers.saveList(users);
+            cdaoProducts.saveList(products);
+            cdaoOrders.saveList(orders);
         }
-        for (CProduct product : products)
+
+        //пользователи, совершившие покупки(ку) в пятницу
+        List<CUser> users_from_database = cdaoUsers.getAll();
+        List<CUser> friday_users = new ArrayList<>();
+        for (CUser user : users_from_database)
         {
-            cdaoProducts.save(product);
+            for (COrder order : user.getOrders())
+            {
+                if (fridayCheck(order.getPurchase_date()))
+                {
+                    friday_users.add(user);
+                    break;
+                }
+            }
         }
-        for (COrder order : orders)
-        {
-            cdaoOrders.save(order);
-        }
+        int x = 0;
     }
 }

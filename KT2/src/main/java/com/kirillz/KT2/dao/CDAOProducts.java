@@ -76,6 +76,24 @@ public class CDAOProducts implements IDAO<CProduct>{
         }
     }
 
+    public void saveList(List<CProduct> products)
+    {
+        int objects_in_one_transaction = 1000;
+        try(Session session = sessionFactory.openSession())
+        {
+            for (int i = 0; i < products.size(); i++) {
+                session.beginTransaction();
+                for (int j = 0; j < objects_in_one_transaction && i < products.size(); j++, i++)
+                    session.save(products.get(i));
+                session.getTransaction().commit();
+            }
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void update(CProduct user)
     {

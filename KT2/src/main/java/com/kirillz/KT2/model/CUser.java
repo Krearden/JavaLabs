@@ -10,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class CUser {
+public class  CUser {
     @Id
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;

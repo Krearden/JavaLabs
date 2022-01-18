@@ -31,6 +31,12 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "11"
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}
+
 mainClassName = 'com.kirillz.KT2.Main'
 
 dependencies {
@@ -41,6 +47,7 @@ dependencies {
     implementation 'org.hibernate.orm:hibernate-core:6.0.0.Alpha9'
     implementation 'javax.persistence:javax.persistence-api:2.2'
     implementation 'org.postgresql:postgresql:42.3.1'
+    implementation("no.tornado:tornadofx:2.0.0-SNAPSHOT")
 
 }
 
