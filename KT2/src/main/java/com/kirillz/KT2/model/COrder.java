@@ -24,7 +24,7 @@ public class COrder {
     @JoinColumn(name="owner", nullable=false)
     CUser owner;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "products_in_orders", joinColumns = @JoinColumn(name = "order_id"), inverseJoinColumns = @JoinColumn(name = "product_id"))
     List<CProduct> products;
 

@@ -8,8 +8,15 @@ import tornadofx.ViewModel
 class CViewModelUserList : ViewModel() {
     val serviceUsers : CServiceUsers by inject()
     val users = serviceUsers.getAll()
+
     fun save()
     {
+        serviceUsers.save(users)
+    }
 
+    fun delete(userfx : CUserFX?)
+    {
+        userfx?:return
+        serviceUsers.delete(userfx)
     }
 }

@@ -267,7 +267,7 @@ public class Main {
         }
     }
     //загрузка информации из excel и заполнение аргументов классов, отвечающих за связь между ними
-    private static void loadInfo()
+    public static void loadInfo(boolean load_2_db)
     {
         //заполняем списки, определенные в начале файла. аргументы представленных классов, ссылающиеся друг на друга, пока пусты.
         loadProductsExcel();
@@ -277,6 +277,17 @@ public class Main {
         loadProductsInOrders();
         loadOrdersInProducts();
         loadOrdersInUsers();
+        //производим загрузку информации в базу данных
+        //cdao
+        if (load_2_db == true)
+        {
+            CDAOUsers cdaoUsers = new CDAOUsers(CHibernateConfig.getSessionFactory());
+            CDAOProducts cdaoProducts = new CDAOProducts(CHibernateConfig.getSessionFactory());
+            CDAOOrders cdaoOrders = new CDAOOrders(CHibernateConfig.getSessionFactory());
+            cdaoUsers.saveList(users);
+            cdaoProducts.saveList(products);
+            cdaoOrders.saveList(orders);
+        }
     }
 
     //проверка, является ли дата пятницой
@@ -347,6 +358,19 @@ public class Main {
         return answer_product_name;
     }
 
+    public static void cleanOrdersWhenDeletingUser(UUID user_id)
+    {
+        for (COrder order : orders)
+        {
+            UUID owner_id = order.getOwner().getId();
+            CDAOOrders cdaoOrders = new CDAOOrders(CHibernateConfig.getSessionFactory());
+            if (user_id.equals(owner_id))
+            {
+                cdaoOrders.delete(order);
+            }
+        }
+    }
+
     //функция записи результатов работы программы в WORD файл
 //    private static void createWord()
 //    {
@@ -414,34 +438,48 @@ public class Main {
 
     public static void main(String[] args) {
         // write you r code here
-        loadInfo();
-        //cdao
-        CDAOUsers cdaoUsers = new CDAOUsers(CHibernateConfig.getSessionFactory());
-        CDAOProducts cdaoProducts = new CDAOProducts(CHibernateConfig.getSessionFactory());
-        CDAOOrders cdaoOrders = new CDAOOrders(CHibernateConfig.getSessionFactory());
-        //чтобы не записывать информацию в бд при каждом запуске
-        boolean load2database = false;
-        if (load2database)
-        {
-            cdaoUsers.saveList(users);
-            cdaoProducts.saveList(products);
-            cdaoOrders.saveList(orders);
-        }
+//        loadInfo(true);
 
-        //пользователи, совершившие покупки(ку) в пятницу
-        List<CUser> users_from_database = cdaoUsers.getAll();
-        List<CUser> friday_users = new ArrayList<>();
-        for (CUser user : users_from_database)
+//        //пользователи, совершившие покупки(ку) в пятницу
+//        List<CUser> users_from_database = cdaoUsers.getAll();
+//        List<CUser> friday_users = new ArrayList<>();
+//        for (CUser user : users_from_database)
+//        {
+//            for (COrder order : user.getOrders())
+//            {
+//                if (fridayCheck(order.getPurchase_date()))
+//                {
+//                    friday_users.add(user);
+//                    break;
+//                }
+//            }
+//        }
+
+        CDAOUsers daoUsers = new CDAOUsers(CHibernateConfig.getSessionFactory());
+        CDAOOrders daoOrders = new CDAOOrders(CHibernateConfig.getSessionFactory());
+        CDAOProducts daoProducts = new CDAOProducts(CHibernateConfig.getSessionFactory());
+
+        CUser testu = daoUsers.get(UUID.fromString("6720a44c-af02-41e9-9d19-c4bb1c38c9a9"));
+        CProduct testp = daoProducts.get(UUID.fromString("c5ae6430-e706-4128-91d4-84dd164f9d57"));
+        COrder testo =daoOrders.get(UUID.fromString("4a14fb75-cbec-4872-a343-62eaf4d99d0b"));
+
+        //реализация удаления товара
+        List<COrder> products_orders = testp.getOrders();
+        for (COrder order : products_orders)
         {
-            for (COrder order : user.getOrders())
+            for (int i = 0; i < order.getProducts().size(); i++)
             {
-                if (fridayCheck(order.getPurchase_date()))
+                if (order.getProducts().get(i).equals(testp))
                 {
-                    friday_users.add(user);
-                    break;
+                    order.getProducts().remove(i);
                 }
             }
         }
+        daoOrders.updateList(products_orders);
+        daoProducts.delete(testp);
+
         int x = 0;
+
+
     }
 }

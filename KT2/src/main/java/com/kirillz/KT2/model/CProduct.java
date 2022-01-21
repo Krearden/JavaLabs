@@ -1,6 +1,8 @@
 package com.kirillz.KT2.model;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -23,7 +25,7 @@ public class CProduct {
     @Column(name = "category")
     private String category;
 
-    @ManyToMany(mappedBy = "products", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "products", fetch = FetchType.EAGER)
     private List<COrder> orders;
 
     //геттеры, сеттеры и функции
