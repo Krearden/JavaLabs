@@ -64,22 +64,6 @@ public class CDAOProducts implements IDAO<CProduct>{
         return orders;
     }
 
-    public List<CProduct> getAllByUser(CUser user){
-        List<CProduct> products;
-        try(Session session = sessionFactory.openSession())
-        {
-            Query<CProduct> q = session.createQuery("Select p from CProduct p JOIN p.orders o WHERE o.owner=:user");
-            q.setParameter("user", user);
-            products = q.list();
-        }
-        catch(Exception e)
-        {
-            products = new ArrayList<>();
-            e.printStackTrace();
-        }
-        return products;
-    }
-
     @Override
     public void save(CProduct user)
     {

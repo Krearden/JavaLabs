@@ -79,6 +79,15 @@ class CViewUserList : View("Пользователи") {
 
                     }
                     label("")
+                    button("Сгенерировать отчет")
+                    {
+                        useMaxWidth = true
+                        action {
+                            Main.createWord()
+
+                        }
+                    }
+                    label("")
                 }
             }
         }

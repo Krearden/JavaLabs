@@ -279,7 +279,7 @@ public class Main {
         loadOrdersInUsers();
         //производим загрузку информации в базу данных
         //cdao
-        if (load_2_db == true)
+        if (load_2_db)
         {
             CDAOUsers cdaoUsers = new CDAOUsers(CHibernateConfig.getSessionFactory());
             CDAOProducts cdaoProducts = new CDAOProducts(CHibernateConfig.getSessionFactory());
@@ -357,69 +357,66 @@ public class Main {
         }
         return answer_product_name;
     }
+
     //функция записи результатов работы программы в WORD файл
-//    private static void createWord()
-//    {
-//        boolean friday;
-//        UUID user_id;
-//        UUID product_id;
-//        String username;
-//        String product_name;
-//        try (XWPFDocument document = new XWPFDocument())
-//        {
-//            //хедер
-//            XWPFHeader head = document.createHeader(HeaderFooterType.DEFAULT);
-//            head.createParagraph()
-//                    .createRun()
-//                    .setText("КТ-1 Java; Выполнил Кирилл Запорожченко (2 курс, Физфак, ПМИ, ФЗ-12)");
-//            //заголовок документа
-//            XWPFParagraph paragraph = document.createParagraph();
-//            paragraph.setAlignment(ParagraphAlignment.CENTER);
-//            XWPFRun run = paragraph.createRun();
-//            run.setBold(true);
-//            run.setFontFamily("Courier");
-//            run.setFontSize(15);
-//            run.setText("\nНиже представлены пользователи, которые совершили покупки в пятницу\n");
-//            //создаем табцицу
-//            XWPFTable table = document.createTable();
-//            //первая строка таблицы с заголовками столбцов
-//            XWPFTableRow tableRowOne = table.getRow(0);
-//            tableRowOne.getCell(0).setText("Имя");
-//            tableRowOne.addNewTableCell().setText("Пользователь ИД");
-//            tableRowOne.addNewTableCell().setText("Наименование");
-//            tableRowOne.addNewTableCell().setText("Продукт ИД");
-//            //цикл - проходимся по заказам и записываем в таблицу те, которые были совершены в ПТ
-//            for (int i = 0; i < orders.size(); i++)
-//            {
-//                LocalDate purchase_date = orders.get(i).getPurchase_date();
-//                friday = fridayCheck(purchase_date);
-//                if (friday)
-//                {
-//                    user_id = orders.get(i).getUser_id();
-//                    product_id = orders.get(i).getProduct_id();
-//                    username = getNameById(user_id);
-//                    product_name = getProductNameById(product_id);
-//                    System.out.println("FRIDAY" + " " + user_id + " " + username + " " + product_name);
-//                    //создание и запись информации в новую строку таблицы
-//                    XWPFTableRow tableRow = table.createRow();
-//                    tableRow.getCell(0).setText(username);
-//                    tableRow.addNewTableCell().setText(user_id.toString());
-//                    tableRow.addNewTableCell().setText(product_name);
-//                    tableRow.addNewTableCell().setText(orders.get(i).getProduct_id().toString());
-//                }
-//            }
-//
-//            try (FileOutputStream out = new FileOutputStream("friday_users_report.docx")) {
-//                document.write(out);
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public static void createWord()
+    {
+        CDAOOrders daoOrders = new CDAOOrders(CHibernateConfig.getSessionFactory());
+        List<COrder> orders;
+        orders = daoOrders.getAll();
+        boolean friday;
+        UUID user_id;
+        UUID product_id;
+        String username;
+        String product_name;
+        try (XWPFDocument document = new XWPFDocument())
+        {
+            //хедер
+            XWPFHeader head = document.createHeader(HeaderFooterType.DEFAULT);
+            head.createParagraph()
+                    .createRun()
+                    .setText("КТ-2 Технологии Java; Выполнил Кирилл Запорожченко (2 курс, Физфак, ПМИ, ФЗ-12)");
+            //заголовок документа
+            XWPFParagraph paragraph = document.createParagraph();
+            paragraph.setAlignment(ParagraphAlignment.CENTER);
+            XWPFRun run = paragraph.createRun();
+            run.setBold(true);
+            run.setFontFamily("Courier");
+            run.setFontSize(15);
+            run.setText("\nНиже представлены пользователи, которые совершили покупки в пятницу\n");
+            //создаем табцицу
+            XWPFTable table = document.createTable();
+            //первая строка таблицы с заголовками столбцов
+            XWPFTableRow tableRowOne = table.getRow(0);
+            tableRowOne.getCell(0).setText("ID");
+            tableRowOne.addNewTableCell().setText("Date_of_birth");
+            tableRowOne.addNewTableCell().setText("Gender");
+            tableRowOne.addNewTableCell().setText("Login");
+            tableRowOne.addNewTableCell().setText("Name");
+            for (COrder order : orders)
+            {
+                if (fridayCheck(order.getPurchase_date()))
+                {
+                    CUser friday_user = order.getOwner();
+                    XWPFTableRow tableRow = table.createRow();
+                    tableRow.getCell(0).setText(friday_user.getId().toString());
+                    tableRow.addNewTableCell().setText(friday_user.getDateOfBirth().toString());
+                    tableRow.addNewTableCell().setText(friday_user.getGender());
+                    tableRow.addNewTableCell().setText(friday_user.getLogin());
+                    tableRow.addNewTableCell().setText(friday_user.getName());
+                }
+            }
+            try (FileOutputStream out = new FileOutputStream("KT2_friday_users_report.docx")) {
+                document.write(out);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     public static void main(String[] args) {
