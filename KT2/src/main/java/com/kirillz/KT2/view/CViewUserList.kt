@@ -53,6 +53,9 @@ class CViewUserList : View("Пользователи") {
                     label("")
                     button ("Заказы") {
                         useMaxWidth = true
+                        action {
+                            replaceWith<CViewOrderList>()
+                        }
                     }
                     label("")
                 }

@@ -1,27 +1,26 @@
 package com.kirillz.KT2.view
 
-import com.kirillz.KT2.modelfx.CProductFX
-import com.kirillz.KT2.viewmodel.CViewModelProductList
 import com.kirillz.KT2.Main
+import com.kirillz.KT2.modelfx.COrderFX
+import com.kirillz.KT2.viewmodel.CViewModelOrderList
+import com.kirillz.KT2.viewmodel.CViewModelProductList
 import tornadofx.*
 
-class CViewProductList : View("Товары") {
-    val viewModelProductList : CViewModelProductList by inject()
-    val table = tableview(viewModelProductList.products) {
-        readonlyColumn("ID", CProductFX::id)
-        column("Категория", CProductFX::propertyCategory).makeEditable()
-        column("Цена", CProductFX::propertyPrice).makeEditable()
-        column("Имя", CProductFX::propertyName).makeEditable()
-        readonlyColumn("Количество заказов у товара", CProductFX::orderCount)
+class CViewOrderList : View("Заказы") {
+    val viewModelOrderList : CViewModelOrderList by inject()
+    val table = tableview(viewModelOrderList.orders) {
+        readonlyColumn("ID Заказа", COrderFX::order_id)
+        column("Дата покупки", COrderFX::propertyPurchase_date)
+        readonlyColumn("ID Владельца заказа", COrderFX::owner_id)
+        readonlyColumn("Количество заказов у товара", COrderFX::productCount)
     }
-
     override val root = borderpane {
         top {
             menubar {
                 menu("База данных") {
                     item("Заполнить базу данных из файла").action {
                         Main.loadInfo(true)
-                        viewModelProductList.save()
+                        viewModelOrderList.save()
                     }
                 }
             }
@@ -62,16 +61,14 @@ class CViewProductList : View("Товары") {
                     label("")
                     button ("Сохранить") {
                         useMaxWidth = true
-                        action {
-                            viewModelProductList.save()
-                        }
                         tooltip("Сохраняет изменения в базу данных")
+                        isDisable = true
                     }
                     label("")
                     button ("Удалить") {
                         useMaxWidth = true
                         action {
-                            viewModelProductList.delete(table.selectedItem)
+                            viewModelOrderList.delete(table.selectedItem)
                         }
 
                     }
@@ -79,5 +76,6 @@ class CViewProductList : View("Товары") {
                 }
             }
         }
+
     }
 }

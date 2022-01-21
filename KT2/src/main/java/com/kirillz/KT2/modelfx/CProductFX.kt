@@ -2,8 +2,6 @@ package com.kirillz.KT2.modelfx
 
 import tornadofx.getProperty
 import tornadofx.property
-import java.time.LocalDate
-import java.time.Period
 import java.util.*
 
 class CProductFX(

@@ -14,7 +14,6 @@ import tornadofx.Controller
 class CServiceProducts : Controller(){
 
     private var daoProducts = CDAOProducts(CHibernateConfig.getSessionFactory())
-    private var daoOrders = CDAOOrders(CHibernateConfig.getSessionFactory())
     val products = FXCollections.observableArrayList<CProductFX>()
 
     //достать все товары из базы данных и преобразовать в CProductFX для отображения в интерфейсе программы

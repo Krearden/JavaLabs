@@ -448,19 +448,10 @@ public class Main {
         CProduct testp = daoProducts.get(UUID.fromString("c5ae6430-e706-4128-91d4-84dd164f9d57"));
 
         //реализация удаления товара
-        List<COrder> products_orders = testp.getOrders();
-        for (COrder order : products_orders)
-        {
-            for (int i = 0; i < order.getProducts().size(); i++)
-            {
-                if (order.getProducts().get(i).equals(testp))
-                {
-                    order.getProducts().remove(i);
-                }
-            }
-        }
-        daoOrders.updateList(products_orders);
-        daoProducts.delete(testp);
+        List<COrder> getorders = daoOrders.getAll();
+        COrder getord = daoOrders.get(UUID.fromString("543f8f1c-7733-4f8a-9a1a-67bdab5ea5fd"));
+        List<CProduct> getproducts = daoProducts.getAll();
+
 
         int x = 0;
 

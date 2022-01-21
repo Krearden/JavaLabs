@@ -1,9 +1,9 @@
 package com.kirillz.KT2.dao;
 
-import com.kirillz.KT2.model.CUser;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import com.kirillz.KT2.model.COrder;
+import org.hibernate.Transaction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,10 @@ public class CDAOOrders implements IDAO<COrder>{
         List<COrder> orders;
         try(Session session = sessionFactory.openSession())
         {
+            Transaction transaction = null;
+            transaction = session.beginTransaction();
             orders = session.createQuery("from COrder").list();
+            transaction.commit();
         }
         catch(Exception e)
         {
