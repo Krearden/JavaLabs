@@ -1,21 +1,19 @@
 package com.kirillz.KT2.view
 
-import com.kirillz.KT2.modelfx.CUserFX
-import com.kirillz.KT2.viewmodel.CViewModelUserList
+import com.kirillz.KT2.modelfx.CProductFX
+import com.kirillz.KT2.viewmodel.CViewModelProductList
 import com.kirillz.KT2.Main
 import tornadofx.*
 
-class CViewUserList : View("Пользователи") {
-    val viewModelUserList : CViewModelUserList by inject()
-    val table = tableview(viewModelUserList.users) {
-                    readonlyColumn("ID", CUserFX::id)
-                    column("Логин", CUserFX::propertyLogin).makeEditable()
-                    column("Имя", CUserFX::propertyName).makeEditable()
-                    column("Пол", CUserFX::propertyGender).makeEditable()
-                    column("Дата рождения", CUserFX::propertyDateOfBirth).makeEditable()
-                    readonlyColumn("Возраст", CUserFX::age)
-                    readonlyColumn("Количество заказов", CUserFX::orderCount)
-                }
+class CViewProductList : View("Товары") {
+    val viewModelProductList : CViewModelProductList by inject()
+    val table = tableview(viewModelProductList.products) {
+        readonlyColumn("ID", CProductFX::id)
+        column("Категория", CProductFX::propertyCategory).makeEditable()
+        column("Цена", CProductFX::propertyPrice).makeEditable()
+        column("Имя", CProductFX::propertyName).makeEditable()
+        readonlyColumn("Количество заказов у товара", CProductFX::orderCount)
+    }
 
     override val root = borderpane {
         top {
@@ -23,7 +21,7 @@ class CViewUserList : View("Пользователи") {
                 menu("База данных") {
                     item("Заполнить базу данных из файла").action {
                         Main.loadInfo(true)
-                        viewModelUserList.save()
+                        viewModelProductList.save()
                     }
                 }
             }
@@ -62,7 +60,7 @@ class CViewUserList : View("Пользователи") {
                     button ("Сохранить") {
                         useMaxWidth = true
                         action {
-                            viewModelUserList.save()
+                            viewModelProductList.save()
                         }
                         tooltip("Сохраняет изменения в базу данных")
                     }
@@ -70,8 +68,7 @@ class CViewUserList : View("Пользователи") {
                     button ("Удалить") {
                         useMaxWidth = true
                         action {
-                            viewModelUserList.delete(table.selectedItem)
-
+                            viewModelProductList.delete(table.selectedItem)
                         }
 
                     }

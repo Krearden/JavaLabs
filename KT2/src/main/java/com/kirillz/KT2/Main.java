@@ -357,20 +357,6 @@ public class Main {
         }
         return answer_product_name;
     }
-
-    public static void cleanOrdersWhenDeletingUser(UUID user_id)
-    {
-        for (COrder order : orders)
-        {
-            UUID owner_id = order.getOwner().getId();
-            CDAOOrders cdaoOrders = new CDAOOrders(CHibernateConfig.getSessionFactory());
-            if (user_id.equals(owner_id))
-            {
-                cdaoOrders.delete(order);
-            }
-        }
-    }
-
     //функция записи результатов работы программы в WORD файл
 //    private static void createWord()
 //    {
@@ -455,13 +441,11 @@ public class Main {
 //            }
 //        }
 
-        CDAOUsers daoUsers = new CDAOUsers(CHibernateConfig.getSessionFactory());
+
         CDAOOrders daoOrders = new CDAOOrders(CHibernateConfig.getSessionFactory());
         CDAOProducts daoProducts = new CDAOProducts(CHibernateConfig.getSessionFactory());
 
-        CUser testu = daoUsers.get(UUID.fromString("6720a44c-af02-41e9-9d19-c4bb1c38c9a9"));
         CProduct testp = daoProducts.get(UUID.fromString("c5ae6430-e706-4128-91d4-84dd164f9d57"));
-        COrder testo =daoOrders.get(UUID.fromString("4a14fb75-cbec-4872-a343-62eaf4d99d0b"));
 
         //реализация удаления товара
         List<COrder> products_orders = testp.getOrders();
