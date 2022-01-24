@@ -163,7 +163,7 @@ public class Main {
         } catch (Exception e) {e.printStackTrace();}
     }
 
-    //beta заполнить продукты у заказов
+    //заполнить продукты у заказов
     private static void loadProductsInOrders()
     {
         for (COrder order : orders)
@@ -196,12 +196,14 @@ public class Main {
                     product_id = UUID.fromString(temp);
                     if (user_id.equals(owners_uuid))
                     {
+                        //находится объект класса CProduct по его UUID и добавляется в список
                         local_products.add(getCProductById(product_id));
                     }
                 }
             } catch (Exception e) {e.printStackTrace();}
+            //заполененный список присваевается агрументу класса COrder
+            //теперь конкретный заказ "понимает" какие в нем находятся товары
             order.setProducts(local_products);
-
         }
     }
 
@@ -364,11 +366,6 @@ public class Main {
         CDAOOrders daoOrders = new CDAOOrders(CHibernateConfig.getSessionFactory());
         List<COrder> orders;
         orders = daoOrders.getAll();
-        boolean friday;
-        UUID user_id;
-        UUID product_id;
-        String username;
-        String product_name;
         try (XWPFDocument document = new XWPFDocument())
         {
             //хедер

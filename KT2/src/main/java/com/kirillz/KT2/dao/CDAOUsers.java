@@ -78,6 +78,7 @@ public class CDAOUsers implements IDAO<CUser> {
     }
 
     //сохранение списка пользователей в базу данных с учетом оптимального количества объектов класса в одной транзакции
+    //в нашем случае из-за небольшого количества данных не имеет особого занчения
     public void saveList(List<CUser> users)
     {
         int objects_in_one_transaction = 1000;
@@ -132,14 +133,19 @@ public class CDAOUsers implements IDAO<CUser> {
     @Override
     public void delete(CUser user)
     {
+        //создается сессия
         try(Session session = sessionFactory.openSession())
         {
+            //начинается транзакция
             session.beginTransaction();
+            //выполняется удаление
             session.delete(user);
+            //применение изменений
             session.getTransaction().commit();
         }
         catch(Exception e)
         {
+            //ошибка, если не удалось открыть сессию
             e.printStackTrace();
         }
     }

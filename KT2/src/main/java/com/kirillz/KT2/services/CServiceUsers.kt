@@ -19,6 +19,9 @@ class CServiceUsers : Controller()
     fun getAll() : ObservableList<CUserFX>
     {
         users.clear()
+        //каждый пользователь (CUser) из всех, что находятся в базе данных преобразуется в CUserFX для отображения в интерфейсе
+        //и добавляется в список users
+        //для чистоты кода и более удобного процесса конвертации данных используяется встроенный в Kotlin интерфейс Map
         users.addAll(daoUsers.all.map {user-> CUserFX(user.id, user.login, user.name, user.dateOfBirth, user.gender, user.orders.size)})
 
         return users
