@@ -1,8 +1,11 @@
 package com.kirillz.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -28,10 +31,12 @@ public class COrder {
 
     @ManyToOne
     @JoinColumn(name="owner", nullable=false)
+    @JsonIdentityReference(alwaysAsId = true)
     CUser owner;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(name = "products_in_orders", joinColumns = @JoinColumn(name = "order_id"), inverseJoinColumns = @JoinColumn(name = "product_id"))
+    @JsonIdentityReference(alwaysAsId = true)
     List<CProduct> products;
 
     //геттеры и сеттеры

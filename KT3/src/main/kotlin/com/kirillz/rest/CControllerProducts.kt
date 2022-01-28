@@ -1,7 +1,7 @@
 package com.kirillz.rest
 
 import com.kirillz.model.CProduct
-import com.kirillz.model.CUser
+import com.kirillz.repositories.IRepositoryOrders
 import com.kirillz.repositories.IRepositoryProducts
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
@@ -13,6 +13,9 @@ import java.util.*
 class CControllerProducts {
     @Autowired
     private lateinit var repositoryProducts    : IRepositoryProducts
+    //подключаем репозиторий заказов для чистки связей в БД перед удалением товара
+    @Autowired
+    private lateinit var repositoryOrders    : IRepositoryOrders
 
     @GetMapping("")
     fun getAll()                            : List<CProduct>
@@ -35,6 +38,20 @@ class CControllerProducts {
     @DeleteMapping
     fun deleteProduct(@RequestBody cproduct : CProduct)
     {
+        val cproduct = repositoryProducts.getById(cproduct.id)
+        for (order in cproduct.orders)
+        {
+            val iterator = order.products.iterator()
+            while (iterator.hasNext())
+            {
+                val pr = iterator.next()
+                if (pr.id == cproduct.id)
+                {
+                    iterator.remove()
+                }
+            }
+            repositoryOrders.save(order)
+        }
         repositoryProducts.delete(cproduct)
     }
 

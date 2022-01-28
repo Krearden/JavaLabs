@@ -32,8 +32,8 @@ class CControllerOrders {
     }
 
     @DeleteMapping
-    fun deleteOrder(@RequestBody corder : COrder)
+    fun deleteOrder(@RequestParam id : UUID)
     {
-        repositoryOrders.delete(corder)
+        repositoryOrders.deleteById(id)
     }
 }

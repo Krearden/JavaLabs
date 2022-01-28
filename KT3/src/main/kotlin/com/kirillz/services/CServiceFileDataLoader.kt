@@ -3,12 +3,19 @@ package com.kirillz.services
 import com.kirillz.model.COrder
 import com.kirillz.model.CProduct
 import com.kirillz.model.CUser
+import com.kirillz.repositories.IRepositoryOrders
+import com.kirillz.repositories.IRepositoryProducts
+import com.kirillz.repositories.IRepositoryUsers
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.wp.usermodel.HeaderFooterType
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.apache.poi.xwpf.usermodel.*
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Configurable
+import org.springframework.stereotype.Service
+import org.springframework.web.bind.annotation.RestController
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
@@ -18,7 +25,8 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
 
-
+@Service
+@Configurable
 object CServiceFileDataLoader {
     val users = ArrayList<CUser>()
     val products = ArrayList<CProduct>()
@@ -354,4 +362,5 @@ object CServiceFileDataLoader {
             e.printStackTrace()
         }
     }
+
 }

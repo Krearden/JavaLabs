@@ -1,6 +1,8 @@
 package com.kirillz.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -12,6 +14,10 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "products")
+@JsonIdentityInfo(
+        generator                           = ObjectIdGenerators.PropertyGenerator.class,
+        property                            = "id"
+)
 public class CProduct {
     @Id
     @Column(name = "id", updatable = false, nullable = false)
@@ -26,7 +32,7 @@ public class CProduct {
     @Column(name = "category")
     private String category;
 
-    @ManyToMany(mappedBy = "products", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "products")
     @JsonIdentityReference(alwaysAsId = true)
     private List<COrder> orders;
 

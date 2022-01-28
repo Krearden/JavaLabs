@@ -1,6 +1,10 @@
 package com.kirillz.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -10,6 +14,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
+@JsonIdentityInfo(
+        generator                           = ObjectIdGenerators.PropertyGenerator.class,
+        property                            = "id"
+)
 public class CUser {
     @Id
     @Column(name = "id", updatable = false, nullable = false)
@@ -27,7 +35,7 @@ public class CUser {
     @Column(name = "date_of_birth", columnDefinition = "DATE")
     private LocalDate dateOfBirth;
 
-    @OneToMany(mappedBy="owner", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy="owner", fetch = FetchType.EAGER)
     @JsonIdentityReference(alwaysAsId = true)
     private List<COrder> orders;
 
