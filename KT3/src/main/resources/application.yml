@@ -1,0 +1,20 @@
+server:
+  port: 8080
+
+spring:
+  jpa:
+    #настройка параметров БД
+    database: POSTGRESQL
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    #данные для подключения к БД
+    url: jdbc:postgresql://localhost:5432/KT2_Database
+    username: KT2_User
+    password: kt2pass
+  sql:
+    init:
+      #указываем, что БД находится под управлением СУБД postgresql
+      platform: postgres
